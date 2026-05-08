@@ -8,7 +8,7 @@ mailing = Mailing(
     "TRACK12345",
 )
 print(
-    f"Mailing from {mailing.from_address} to {mailing.sento_address}. "
+    f"Mailing from {mailing.from_address} to {mailing.to_address}. "
     f"Cost: ${mailing.cost}. Tracking number: {mailing.track}"
 )
 
