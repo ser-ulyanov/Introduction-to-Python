@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+
+git rm --cached -r 03_lesson/__pycache__
+git rm --cached 03_lesson/address.cpython-314.pyc
+git rm --cached 03_lesson/mailing.cpython-314.pyc
