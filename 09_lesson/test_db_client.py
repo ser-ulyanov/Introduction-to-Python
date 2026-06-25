@@ -50,7 +50,8 @@ def test_db_connection():
     """Тест проверяет подключение к БД и наличие таблицы subject."""
     inspector = inspect(db)
     names = inspector.get_table_names()
-    assert 'subject' in names, f"Таблица 'subject' не найдена! Найдены: {names}"
+    assert 'subject' in names, f"Таблица 'subject' не найдена! Найдены: {
+        names}"
     print(f"✅ Таблицы в БД: {names}")
 
 
@@ -61,7 +62,7 @@ def test_create_subject():
     ✅ Удаляет данные после теста
     """
     subject_name = "Python autotest"
-    
+
     # CREATE
     create_subject(subject_name)
 
@@ -88,7 +89,7 @@ def test_read():
     ✅ Удаляет данные после теста
     """
     test_name = "Test Read Subject"
-    
+
     # CREATE - создаем данные для чтения
     create_subject(test_name)
 
@@ -98,13 +99,13 @@ def test_read():
         rows = result.mappings().all()
 
         assert len(rows) > 0, "Таблица subject пуста!"
-        
+
         found = False
         for row in rows:
             if row['subject_title'] == test_name:
                 found = True
                 break
-        
+
         assert found is True, f"Предмет '{test_name}' не найден"
         print(f"✅ READ: Найден предмет: '{test_name}'")
 
@@ -121,7 +122,7 @@ def test_update_subject():
     """
     old_name = "Python autotest"
     new_name = "Python autotest updated"
-    
+
     # CREATE - создаем данные для обновления
     create_subject(old_name)
 
@@ -133,14 +134,15 @@ def test_update_subject():
     subjects = get_subjects()
     old_found = False
     new_found = False
-    
+
     for subject in subjects:
         if subject["subject_title"] == old_name:
             old_found = True
         if subject["subject_title"] == new_name:
             new_found = True
 
-    assert old_found is False, f"Старый предмет '{old_name}' все еще существует!"
+    assert old_found is False, f"Старый предмет '{
+        old_name}' все еще существует!"
     assert new_found is True, f"Новый предмет '{new_name}' не найден!"
     print(f"✅ UPDATE: Старый удален, новый создан: {new_name}")
 
@@ -193,7 +195,7 @@ def test_get_subjects():
     ✅ Удаляет данные после теста
     """
     name = "Test list subject"
-    
+
     # CREATE - создаем данные
     create_subject(name)
 
