@@ -55,12 +55,17 @@ def test_db_connection():
 
 
 def test_create_subject():
-    """Тест на добавление предмета."""
-    # 1. Создаем данные
+    """
+    Тест CREATE: добавление предмета.
+    ✅ Создает данные
+    ✅ Удаляет данные после теста
+    """
     subject_name = "Python autotest"
+    
+    # CREATE
     create_subject(subject_name)
 
-    # 2. Проверяем, что добавилось
+    # READ - проверяем
     subjects = get_subjects()
     result = False
     for subject in subjects:
@@ -68,93 +73,135 @@ def test_create_subject():
             result = True
             break
 
-    # 3. Проверяем результат
     assert result is True, f"Предмет '{subject_name}' не найден в БД"
-    print(f"✅ Предмет найден: {subject_name}")
+    print(f"✅ CREATE: Предмет найден: {subject_name}")
+
+    # DELETE - очистка после теста
+    delete_subject_by_name(subject_name)
+    print("✅ test_create_subject пройден!")
 
 
 def test_read():
-    """Тест на чтение данных из таблицы."""
+    """
+    Тест READ: чтение данных.
+    ✅ Создает данные
+    ✅ Удаляет данные после теста
+    """
+    test_name = "Test Read Subject"
+    
+    # CREATE - создаем данные для чтения
+    create_subject(test_name)
+
+    # READ - читаем
     with db.connect() as connection:
         result = connection.execute(text("SELECT subject_title FROM subject"))
         rows = result.mappings().all()
 
-        # Проверяем, что таблица не пуста
-        assert len(rows) > 0, "Таблица subject пуста! Нет данных для чтения."
+        assert len(rows) > 0, "Таблица subject пуста!"
+        
+        found = False
+        for row in rows:
+            if row['subject_title'] == test_name:
+                found = True
+                break
+        
+        assert found is True, f"Предмет '{test_name}' не найден"
+        print(f"✅ READ: Найден предмет: '{test_name}'")
 
-        row1 = rows[0]
-        print(f"Первая запись: title='{row1['subject_title']}'")
-
-        # Проверяем, что есть данные
-        assert row1['subject_title'] is not None, "subject_title не должен быть None"
-
-        print("✅ test_read пройден!")
+    # DELETE - очистка после теста
+    delete_subject_by_name(test_name)
+    print("✅ test_read пройден!")
 
 
 def test_update_subject():
-    """Тест на обновление предмета."""
-    # 1. Создаем
+    """
+    Тест UPDATE: обновление предмета.
+    ✅ Создает данные
+    ✅ Удаляет данные после теста
+    """
     old_name = "Python autotest"
+    new_name = "Python autotest updated"
+    
+    # CREATE - создаем данные для обновления
     create_subject(old_name)
 
-    # 2. Обновляем (удаляем старый, создаем новый с новым именем)
-    new_name = "Python autotest updated"
+    # UPDATE - обновляем
     delete_subject_by_name(old_name)
     create_subject(new_name)
 
-    # 3. Проверяем
+    # READ - проверяем
     subjects = get_subjects()
-    result = False
+    old_found = False
+    new_found = False
+    
     for subject in subjects:
+        if subject["subject_title"] == old_name:
+            old_found = True
         if subject["subject_title"] == new_name:
-            result = True
-            break
+            new_found = True
 
-    assert result is True, f"Обновленный предмет '{new_name}' не найден"
-    print(f"✅ Предмет обновлен: {new_name}")
+    assert old_found is False, f"Старый предмет '{old_name}' все еще существует!"
+    assert new_found is True, f"Новый предмет '{new_name}' не найден!"
+    print(f"✅ UPDATE: Старый удален, новый создан: {new_name}")
+
+    # DELETE - очистка после теста
+    delete_subject_by_name(new_name)
+    print("✅ test_update_subject пройден!")
 
 
 def test_delete_subject():
-    """Тест DELETE: удаление существующего предмета из списка."""
-    # 1. Получаем список всех предметов
+    """
+    Тест DELETE: удаление предмета.
+    ✅ Создает данные в рамках теста
+    ✅ Удаляет данные после теста
+    """
+    # CREATE - создаем данные для удаления (в рамках теста)
+    subject_name = "Python autotest for delete"
+    create_subject(subject_name)
+
+    # READ - проверяем, что создался
     subjects = get_subjects()
-    
-    # Проверяем, что список не пуст
-    assert len(subjects) > 0, "Таблица subject пуста! Сначала создайте данные через test_create_subject"
-    print(f"✅ DELETE: Всего предметов в списке: {len(subjects)}")
-    
-    # 2. Берем ПЕРВЫЙ предмет из списка (или любой существующий)
-    subject_name = subjects[0]["subject_title"]
-    print(f"✅ DELETE: Выбран предмет для удаления: '{subject_name}'")
-    
-    # 3. Удаляем выбранный предмет
+    found = False
+    for subject in subjects:
+        if subject["subject_title"] == subject_name:
+            found = True
+            break
+
+    assert found is True, f"Предмет '{subject_name}' не создан"
+    print(f"✅ DELETE: Предмет создан: {subject_name}")
+
+    # DELETE - удаляем
     delete_subject_by_name(subject_name)
-    
-    # 4. Проверяем, что удалился
+
+    # READ - проверяем, что удалился
     subjects_after = get_subjects()
     found = False
     for subject in subjects_after:
         if subject["subject_title"] == subject_name:
             found = True
             break
-    
+
     assert found is False, f"Предмет '{subject_name}' не удален!"
     print(f"✅ DELETE: Предмет '{subject_name}' успешно удален")
-    print(f"✅ DELETE: Осталось предметов: {len(subjects_after)}")
     print("✅ test_delete_subject пройден!")
 
 
 def test_get_subjects():
-    """Тест на получение списка предметов."""
-    # 1. Создаем тестовую запись
+    """
+    Тест GET: получение списка предметов.
+    ✅ Создает данные
+    ✅ Удаляет данные после теста
+    """
     name = "Test list subject"
+    
+    # CREATE - создаем данные
     create_subject(name)
 
-    # 2. Получаем список
+    # READ - получаем список
     subjects = get_subjects()
-    print(f"Всего предметов: {len(subjects)}")
+    print(f"✅ GET: Всего предметов: {len(subjects)}")
 
-    # 3. Проверяем, что наша запись есть в списке
+    # Проверяем
     found = False
     for subject in subjects:
         if subject["subject_title"] == name:
@@ -163,3 +210,8 @@ def test_get_subjects():
             break
 
     assert found, f"Созданный предмет '{name}' не найден в списке"
+    print("✅ GET: Предмет найден в списке")
+
+    # DELETE - очистка после теста
+    delete_subject_by_name(name)
+    print("✅ test_get_subjects пройден!")
