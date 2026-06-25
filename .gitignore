@@ -1,6 +1,8 @@
-08_lesson/__pycache__/config.cpython-314.pyc
-08_lesson/__pycache__/conftest.cpython-314-pytest-9.0.3.pyc
-08_lesson/__pycache__/test_projects.cpython-314-pytest-9.0.3.pyc
-09_lesson/__pycache__/db_client.cpython-314.pyc
-09_lesson/__pycache__/test_db_client.cpython-314-pytest-9.1.1.pyc
-09_lesson/__pycache__/test_subjects.cpython-314-pytest-9.1.1.pyc
+__pycache__/
+*.pyc
+08_lesson/__pycache__/_config.python-314.pyc
+08_lesson/__pycache__/_config.python-314_pytest-9.0.3.pyc
+08_lesson/__pycache__/_test_projects.python-314_pytest-9.0.3.pyc
+09_lesson/__pycache__/_db_client.python-314.pyc
+09_lesson/__pycache__/_test_db_client.python-314_pytest-9.1.1.pyc
+09_lesson/__pycache__/_test_subjects.python-314_pytest-9.1.1.pyc
