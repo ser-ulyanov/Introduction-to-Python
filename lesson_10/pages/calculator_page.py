@@ -44,25 +44,26 @@ class CalculatorPage:
         :param button: Текст на кнопке
         :return: Экземпляр класса CalculatorPage для цепочки вызовов
         """
-        button_element = WebDriverWait(self.driver, 60).until(
+        button_element = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((
                 By.XPATH, f"//span[text()='{button}']"))
         )
         button_element.click()
         return self
 
-    def get_result(self, expected_result: str = "15") -> str:
+    def get_result(self, expected_result: str = "15", delay: int = 45) -> str:
         """
         Получает результат вычисления
         :param expected_result: Ожидаемое значение для проверки
+        :param delay: Установленная задержка в секундах
         :return: Текст результата
         """
-        # Ожидаем появления элемента с результатом
-        WebDriverWait(self.driver, 60).until(
-        EC.visibility_of_element_located(self.result)
+        # Используем установленную задержку + запас 2 секунды
+        timeout = delay + 2
+        WebDriverWait(self.driver, timeout).until(
+            EC.visibility_of_element_located(self.result)
         )
-        # Получаем текст
         result_text = self.driver.find_element(*self.result).text
-        # Проверяем, что результат соответствует ожидаемому
-        assert result_text == expected_result, f"Ожидался {expected_result}, получен {result_text}"
+        assert result_text == expected_result, f"Ожидался {
+            expected_result}, получен {result_text}"
         return result_text

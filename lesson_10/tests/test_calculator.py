@@ -1,6 +1,9 @@
 import allure
 from selenium.webdriver.remote.webdriver import WebDriver
 from pages.calculator_page import CalculatorPage
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 
 @allure.epic("Тестирование веб-приложений")
@@ -20,7 +23,7 @@ def test_calculator(chrome: WebDriver) -> None:
     calculator = open_calculator(chrome)
     set_delay(calculator, "45")
     perform_calculation(calculator)
-    verify_result(calculator)
+    verify_result(calculator, chrome)
 
 
 @allure.step("Открыть страницу калькулятора")
@@ -47,7 +50,10 @@ def perform_calculation(calculator: CalculatorPage) -> None:
 
 
 @allure.step("Проверить результат вычисления")
-def verify_result(calculator: CalculatorPage) -> None:
-    """Проверяет результат вычисления"""
+def verify_result(calculator: CalculatorPage, driver: WebDriver) -> None:
+    """Проверяет результат вычисления с использованием явного ожидания"""
+    wait = WebDriverWait(driver, 45)
+    wait.until(EC.text_to_be_present_in_element(
+        (By.CSS_SELECTOR, ".screen"), "15"))
     result = calculator.get_result("15")
     assert result == "15", f"Ожидался результат '15', получен '{result}'"
