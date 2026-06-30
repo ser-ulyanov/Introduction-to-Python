@@ -51,12 +51,18 @@ class CalculatorPage:
         button_element.click()
         return self
 
-    def get_result(self) -> str:
+    def get_result(self, expected_result: str = "15") -> str:
         """
         Получает результат вычисления
+        :param expected_result: Ожидаемое значение для проверки
         :return: Текст результата
         """
+        # Ожидаем появления элемента с результатом
         WebDriverWait(self.driver, 60).until(
-            EC.text_to_be_present_in_element(self.result, "15")
+        EC.visibility_of_element_located(self.result)
         )
-        return self.driver.find_element(*self.result).text
+        # Получаем текст
+        result_text = self.driver.find_element(*self.result).text
+        # Проверяем, что результат соответствует ожидаемому
+        assert result_text == expected_result, f"Ожидался {expected_result}, получен {result_text}"
+        return result_text
